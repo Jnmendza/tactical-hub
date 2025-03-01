@@ -11,24 +11,27 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Download } from "lucide-react";
+import { Download, RotateCcw } from "lucide-react"; // Added RotateCcw for reset icon
 import FootballField from "@/components/FootballField";
-import PlayerEditDialog from "@/components/PlayerEditDialog";
 import { formations } from "@/lib/formations";
 import { Player } from "@/lib/types";
 import html2canvas from "html2canvas";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function FormationDesigner() {
   const [players, setPlayers] = useState<Player[]>(formations["4-4-2"]);
   const [currentFormation, setCurrentFormation] = useState<string>("4-4-2");
-  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
+
+  // Selected player for editing
+  const selectedPlayer = players.find((p) => p.id === selectedPlayerId) || null;
 
   const handleFormationChange = (value: string) => {
     setCurrentFormation(value);
     setPlayers(formations[value as keyof typeof formations]);
+    setSelectedPlayerId(null); // Reset selection on formation change
   };
 
   const handlePlayerPositionChange = (id: number, x: number, y: number) => {
@@ -38,36 +41,42 @@ export default function FormationDesigner() {
   };
 
   const handlePlayerSelect = (player: Player) => {
-    setSelectedPlayer(player);
-    setDialogOpen(true);
+    setSelectedPlayerId(player.id);
   };
 
-  const handlePlayerUpdate = (updatedPlayer: Player) => {
+  const handlePlayerUpdate = (field: "name" | "number", value: string) => {
+    if (!selectedPlayer) return;
     setPlayers((prev) =>
       prev.map((player) =>
-        player.id === updatedPlayer.id ? updatedPlayer : player
+        player.id === selectedPlayer.id
+          ? {
+              ...player,
+              [field]:
+                field === "number" ? parseInt(value) || player.number : value,
+            }
+          : player
       )
     );
   };
 
+  const handleResetFormation = () => {
+    setPlayers(formations[currentFormation as keyof typeof formations]);
+    setSelectedPlayerId(null); // Optional: reset selection on reset
+  };
+
   const handleExport = async () => {
     if (!fieldRef.current) return;
-
     try {
-      // Add a temporary class to ensure the field is visible during capture
       fieldRef.current.classList.add("export-capture");
-
       const canvas = await html2canvas(fieldRef.current, {
-        backgroundColor: "#3a8c3f", // Match the field green color
-        scale: 2, // Higher resolution
+        backgroundColor: "#3a8c3f",
+        scale: 2,
         logging: false,
         useCORS: true,
         allowTaint: true,
         onclone: (clonedDoc) => {
-          // Find the cloned field element
           const clonedField = clonedDoc.querySelector(".export-capture");
           if (clonedField) {
-            // Make sure all elements are visible in the clone
             const playerElements = clonedField.querySelectorAll(
               '[style*="position: absolute"]'
             );
@@ -77,18 +86,12 @@ export default function FormationDesigner() {
           }
         },
       });
-
-      // Remove the temporary class
       fieldRef.current.classList.remove("export-capture");
-
-      // Convert to PNG and download
       const image = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.href = image;
       link.download = `formation-${currentFormation}.png`;
-      document.body.appendChild(link); // Needed for Firefox
       link.click();
-      document.body.removeChild(link);
     } catch (error) {
       console.error("Error exporting formation:", error);
     }
@@ -96,7 +99,7 @@ export default function FormationDesigner() {
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-      <Card className='lg:col-span-2'>
+      <Card className='lg:col-span-2 '>
         <CardContent className='p-6'>
           <div ref={fieldRef} className='relative w-full'>
             <FootballField
@@ -112,12 +115,11 @@ export default function FormationDesigner() {
         <Card>
           <CardContent className='p-6'>
             <h2 className='text-2xl font-bold mb-4'>Formation Controls</h2>
-
             <div className='space-y-4'>
               <div>
-                <label className='block text-sm font-medium mb-2'>
+                <Label className='block text-sm font-medium mb-2'>
                   Select Formation
-                </label>
+                </Label>
                 <Select
                   value={currentFormation}
                   onValueChange={handleFormationChange}
@@ -134,19 +136,25 @@ export default function FormationDesigner() {
                   </SelectContent>
                 </Select>
               </div>
-
               <Separator />
-
               <div>
                 <h3 className='text-lg font-medium mb-2'>Actions</h3>
                 <div className='flex gap-2 flex-col'>
                   <Button
                     variant='outline'
-                    className='flex-1'
+                    className='w-full'
                     onClick={handleExport}
                   >
                     <Download className='mr-2 h-4 w-4' />
                     Export
+                  </Button>
+                  <Button
+                    variant='outline'
+                    className='w-full'
+                    onClick={handleResetFormation}
+                  >
+                    <RotateCcw className='mr-2 h-4 w-4' />
+                    Reset Formation
                   </Button>
                 </div>
               </div>
@@ -157,7 +165,84 @@ export default function FormationDesigner() {
         <Card>
           <CardContent className='p-6'>
             <h2 className='text-2xl font-bold mb-4'>Edit Players</h2>
-            <Input />
+            <div className='space-y-4'>
+              {/* Player Selection Dropdown */}
+              <div>
+                <Label className='block text-sm font-medium mb-2'>
+                  Select Player
+                </Label>
+                <Select
+                  value={selectedPlayerId?.toString()} // Removed || "" to avoid empty string
+                  onValueChange={(value) =>
+                    setSelectedPlayerId(value ? parseInt(value) : null)
+                  }
+                >
+                  <SelectTrigger className='bg-gray-800 text-white border-gray-700'>
+                    <SelectValue placeholder='Choose a player' />
+                  </SelectTrigger>
+                  <SelectContent className='bg-gray-900 text-white border-gray-700'>
+                    {players.map((player) => (
+                      <SelectItem
+                        key={player.id}
+                        value={player.id.toString()} // Always a valid string
+                        className='hover:bg-gray-800'
+                      >
+                        {player.number} - {player.name || "Unnamed"} (
+                        {player.position})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Editing Form */}
+              {selectedPlayer && (
+                <div className='space-y-4'>
+                  <div>
+                    <Label
+                      htmlFor='player-name'
+                      className='text-sm font-medium'
+                    >
+                      Name
+                    </Label>
+                    <Input
+                      id='player-name'
+                      value={selectedPlayer.name}
+                      onChange={(e) =>
+                        handlePlayerUpdate("name", e.target.value)
+                      }
+                      placeholder='Player name'
+                      className='mt-1 bg-gray-800 text-white border-gray-700'
+                    />
+                  </div>
+                  <div>
+                    <Label
+                      htmlFor='player-number'
+                      className='text-sm font-medium'
+                    >
+                      Number
+                    </Label>
+                    <Input
+                      id='player-number'
+                      value={selectedPlayer.number.toString()}
+                      onChange={(e) =>
+                        handlePlayerUpdate("number", e.target.value)
+                      }
+                      type='number'
+                      min='1'
+                      max='99'
+                      className='mt-1 bg-gray-800 text-white border-gray-700'
+                    />
+                  </div>
+                  <div>
+                    <Label className='text-sm font-medium'>Position</Label>
+                    <p className='mt-1 text-gray-300'>
+                      {selectedPlayer.position}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -167,19 +252,15 @@ export default function FormationDesigner() {
             <ul className='list-disc pl-5 space-y-2'>
               <li>Select a formation from the dropdown menu</li>
               <li>Drag players to adjust their positions</li>
-              <li>Click on a player to edit their name and number</li>
+              <li>
+                Click a player or use the dropdown to edit their name and number
+              </li>
               <li>Click Export to download your formation as an image</li>
+              <li>Click Reset Formation to revert to the default positions</li>
             </ul>
           </CardContent>
         </Card>
       </div>
-
-      <PlayerEditDialog
-        player={selectedPlayer}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onSave={handlePlayerUpdate}
-      />
     </div>
   );
 }

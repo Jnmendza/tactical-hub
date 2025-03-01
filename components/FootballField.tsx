@@ -117,7 +117,7 @@ export default function FootballField({
         <div className='absolute top-1/2 w-full h-0 border-t-2 border-white transform -translate-y-1/2'></div>
 
         {/* Center circle */}
-        <div className='absolute top-1/2 left-1/2 w-[30%] h-18 rounded-full border-2 border-black transform -translate-x-1/2 -translate-y-1/2 aspect-square'></div>
+        <div className='absolute top-1/2 left-1/2 w-[30%] h-18 rounded-full border-2 border-white transform -translate-x-1/2 -translate-y-1/2 aspect-square'></div>
 
         {/* Penalty areas */}
         <div className='absolute top-0 left-1/2 w-[60%] h-[20%] border-b-2 border-l-2 border-r-2 border-white transform -translate-x-1/2'></div>
