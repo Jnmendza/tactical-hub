@@ -10,3 +10,10 @@ export interface Player {
 export interface Formation {
   [key: string]: Player[];
 }
+
+export interface SimpleBlogCard {
+  title: string;
+  smallDescription: string;
+  currentSlug: string;
+  coverImage: any;
+}
