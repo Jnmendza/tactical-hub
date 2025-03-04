@@ -37,5 +37,11 @@ export default {
       title: 'Content',
       of: [{type: 'block'}],
     },
+    {
+      name: 'categories',
+      type: 'array',
+      title: 'Categories',
+      of: [{type: 'reference', to: {type: 'category'}}],
+    },
   ],
 }

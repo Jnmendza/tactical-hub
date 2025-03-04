@@ -10,7 +10,7 @@ export async function generateStaticParams() {
   const query = `*[_type == "blog"]{ "slug": slug.current }`;
   const posts = await sanityClient().fetch(query);
 
-  return posts.map((post: { slug: string }) => ({ slug: post.slug })); // ✅ Ensure it's an array
+  return posts.map((post: { slug: string }) => ({ slug: post.slug }));
 }
 
 export default async function BlogPost({
@@ -21,21 +21,21 @@ export default async function BlogPost({
   const post: BlogPostType | null = await getPost(params.slug);
 
   if (!post) {
-    return <h1>Post Not Found</h1>; // ✅ Handle missing post
+    return <h1>Post Not Found</h1>;
   }
   console.log(post);
   return (
     <div className='max-w-3xl mx-auto mt-10'>
-      <h1 className='text-3xl font-bold'>{post.title}</h1>
+      <h1 className='text-5xl font-bold text-center'>{post.title}</h1>
       <Image
         src={urlFor(post.coverImage).url()}
         alt={post.title}
         width={800}
         height={500}
         priority
-        className='w-full mt-4 rounded-lg'
+        className='w-full mt-10 rounded-lg'
       />
-      <div className='mt-16 m-auto prose'>
+      <div className='mt-16 m-auto prose dark:prose-invert'>
         <PortableText value={post.content} />
       </div>
     </div>
