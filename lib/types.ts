@@ -17,3 +17,10 @@ export interface SimpleBlogCard {
   currentSlug: string;
   coverImage: any;
 }
+
+export interface BlogPost {
+  currentSlug: string;
+  title: string;
+  content: any;
+  coverImage: any;
+}

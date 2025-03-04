@@ -1,30 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { sanityClient, urlFor } from "@/lib/sanity";
+import { getSimplePosts } from "@/data/sanity";
+import { urlFor } from "@/lib/sanity";
 import { SimpleBlogCard } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 
-export async function getPosts() {
-  const query = `
-        *[_type == 'blog'] | order(_createdAt desc) {
-    title,
-        smallDescription,
-        "currentSlug": slug.current,
-        coverImage
-    }`;
-
-  const data = await sanityClient().fetch(query);
-  return data;
-}
+export const revalidate = 30;
 
 export default async function Blog() {
-  const data: SimpleBlogCard[] = await getPosts();
+  const data: SimpleBlogCard[] = await getSimplePosts();
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 mt-5 gap-5'>
+    <div className='grid grid-cols-2 md:grid-cols-3 mt-5 gap-5'>
       {data.map((post, index) => (
-        <Card key={index}>
+        <Card key={index} className='w-full'>
           <Image
             src={urlFor(post.coverImage).url()}
             alt={post.title}
