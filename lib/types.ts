@@ -24,3 +24,8 @@ export interface BlogPost {
   content: any;
   coverImage: any;
 }
+
+export type ThemeContextType = {
+  theme: "light" | "dark";
+  toggleTheme: () => void;
+};
