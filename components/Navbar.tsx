@@ -1,23 +1,22 @@
 "use client";
 import Link from "next/link";
-import { Button } from "./ui/button";
-import { Sun, Moon } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { usePathname } from "next/navigation";
 import { Logo } from "./svgs";
+import ThemeButton from "./ThemeButton";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
 
   const linkClass = (path: string) =>
-    pathname === path ? "border-b-2 border-blue-500 pb-1" : "hover:opacity-75";
+    pathname === path ? "border-b-2 border-green-600 pb-1" : "hover:opacity-75";
 
   return (
     <nav className='w-full relative flex items-center justify-between max-w-3xl mx-auto px-4 py-3'>
       <Link href={"/"} className='flex font-bold text-3xl'>
         <Logo className='text-4xl mr-2' />
-        Tactical<span className='text-green-600'>Hub</span>
+        Tactical<span className='text-[#00cf78]'>Hub</span>
       </Link>
 
       <div className='space-x-4'>
@@ -32,9 +31,7 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <Button onClick={toggleTheme} variant='outline'>
-        {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-      </Button>
+      <ThemeButton />
     </nav>
   );
 }
