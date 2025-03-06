@@ -6,7 +6,8 @@ export async function getSimplePosts() {
       title,
           smallDescription,
           "currentSlug": slug.current,
-          coverImage
+          coverImage,
+          duration
       }`;
 
   const data = await sanityClient().fetch(query);

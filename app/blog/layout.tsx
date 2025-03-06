@@ -1,23 +1,27 @@
+"use client";
+import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import { ReactNode } from "react";
-
-export const metadata = {
-  title: "Blog",
-  description: "Read the latest blog posts",
-};
 
 export default function BlogLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
-    <div className='flex'>
+    <div className='flex min-h-screen'>
       {/* Sidebar Component */}
-      <Sidebar />
+      <Sidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
 
       {/* Main Content */}
-      <div className='flex-1 lg:pl-72 p-6'>{children}</div>
+      <main
+        className={`flex-1 p-6 transition-all duration-300 ${
+          isExpanded ? "ml-20 lg:ml-72" : "ml-0 lg:ml-20"
+        }`}
+      >
+        {children}
+      </main>
     </div>
   );
 }

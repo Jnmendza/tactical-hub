@@ -1,12 +1,10 @@
 "use client";
 import Link from "next/link";
-import { useTheme } from "./ThemeProvider";
 import { usePathname } from "next/navigation";
 import { Logo } from "./svgs";
 import ThemeButton from "./ThemeButton";
 
 export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
 
   const linkClass = (path: string) =>

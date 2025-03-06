@@ -27,6 +27,11 @@ export default {
       title: 'Small description',
     },
     {
+      name: 'duration',
+      type: 'string',
+      title: "Duration (e.g., '5 min read')",
+    },
+    {
       name: 'coverImage',
       type: 'image',
       title: 'Cover image',
