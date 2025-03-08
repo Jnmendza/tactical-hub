@@ -1,58 +1,55 @@
 "use client";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import BlogHeader from "@/components/BlogHeader";
-import { urlFor } from "@/lib/sanity";
+import FilterBar from "@/components/FilterBar";
 import { SimpleBlogCard } from "@/lib/types";
+import BlogHeader from "@/components/BlogHeader";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { urlFor } from "@/lib/sanity";
 import Image from "next/image";
 
 export default function BlogPage({ posts }: { posts: SimpleBlogCard[] }) {
-  const [activeFilter, setActiveFilter] = useState<string>("All");
+  const [activeFilter, setActiveFilter] = useState<string[]>([]);
+  const [newFilter, setNewFilter] = useState<boolean>(false);
   if (!posts || posts.length === 0) return <p>No posts available.</p>;
 
-  // List of filters
-  const filters = ["All", "New", "5-3-2", "4-2-3-1", "3-5-2", "4-3-3"];
+  // Get the date from 7 days ago
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
   // Store the first post before filtering
   const headerPost = posts[0];
 
-  // Filter & Sort Posts
+  // Apply filters
   const filteredPosts = posts
-    .slice(1)
+    .slice(1) // Exclude the first post from filtering
     .filter((post) => {
-      if (activeFilter === "All") return true;
-      if (activeFilter == "New") return true;
-      return post.categoryTags?.some((cat) => cat === activeFilter);
-    })
-    .sort((a, b) =>
-      activeFilter === "New"
-        ? new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-        : 0
-    );
+      // If "New" is selected, only show posts from the last 7 days
+      if (newFilter) {
+        const postDate = new Date(post.publishedAt);
+        return postDate >= oneWeekAgo;
+      }
+
+      // Otherwise, filter by category (or show all if no category is selected)
+      return (
+        activeFilter.length === 0 ||
+        post.categoryTags.some((cat) => activeFilter.includes(cat))
+      );
+    });
 
   return (
     <div>
       {/* Hero Header */}
       {headerPost && <BlogHeader post={headerPost} />}
 
+      {/* Filter Bar */}
+      <FilterBar
+        activeFilter={activeFilter}
+        setActiveFilter={setActiveFilter}
+        newFilter={newFilter}
+        setNewFilter={setNewFilter}
+      />
+
       {/* Blog Grid */}
-      {/* Filter Buttons */}
-      <div className='flex space-x-4 my-6'>
-        {filters.map((filter) => (
-          <Button
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-2 rounded-md ${
-              activeFilter === filter
-                ? "bg-primary-green text-white"
-                : "bg-gray-200 dark:bg-gray-800"
-            }`}
-          >
-            {filter}
-          </Button>
-        ))}
-      </div>
       <div className='grid grid-cols-1 gap-5 mt-10'>
         <BentoGrid className='mx-auto'>
           {filteredPosts.map(

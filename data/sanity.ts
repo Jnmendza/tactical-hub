@@ -29,3 +29,11 @@ export async function getPost(slug: string) {
 
   return await sanityClient().fetch(query, { slug });
 }
+
+export async function getCategories() {
+  const query = `*[_type == "category"] | order(title asc) { title }`;
+
+  const data = await sanityClient().fetch(query);
+  console.log("SANITY RESPONSE: ", data);
+  return data.map((cat: { title: string }) => cat.title);
+}
