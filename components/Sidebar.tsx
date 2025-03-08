@@ -46,7 +46,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }: SidebarProps) => {
         <div className='flex justify-center mt-14 mb-6'>
           <SecondaryLogo
             className={`transition-all duration-300 ${
-              isExpanded ? "text-5xl" : "text-3xl"
+              isExpanded ? "text-7xl" : "text-3xl"
             }`}
           />
         </div>
@@ -54,20 +54,20 @@ const Sidebar = ({ isExpanded, setIsExpanded }: SidebarProps) => {
         {/* Navigation Section */}
         <nav className='flex-1'>
           <div
-            className={`${bebasFont.className} text-xl font-bold flex flex-col space-y-4`}
+            className={`${bebasFont.className} text-4xl font-bold flex flex-col space-y-4 ml-2`}
           >
             <Link
               href='/'
               className='flex items-center space-x-2 hover:text-white'
             >
-              <Home size={20} />
+              <Home size={24} />
               {isExpanded && <span className='ml-2'>HOME</span>}
             </Link>
             <Link
               href='/blog'
               className='flex items-center space-x-2 hover:text-white'
             >
-              <NotebookPen size={20} />
+              <NotebookPen size={24} />
               {isExpanded && <span className='ml-2'>BLOG</span>}
             </Link>
 
@@ -87,7 +87,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }: SidebarProps) => {
                     <div className='flex items-center space-x-2'>
                       {isExpanded && <span>CATEGORIES</span>}
                       <ArrowDownNarrowWide
-                        size={20}
+                        size={24}
                         className={`${isExpanded ? "hidden" : "block"}`}
                       />
                     </div>

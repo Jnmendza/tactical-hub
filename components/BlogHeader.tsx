@@ -17,6 +17,7 @@ export default function BlogHeader({ post }: BlogHeaderProps) {
       <div className='relative w-full md:rounded-xl overflow-hidden'>
         <AspectRatio.Root ratio={16 / 9} className='w-full'>
           <Image
+            // src={"/"}
             src={urlFor(post.coverImage).url()}
             alt={post.title}
             fill

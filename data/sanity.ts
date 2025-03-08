@@ -7,6 +7,7 @@ export async function getSimplePosts() {
           smallDescription,
           "currentSlug": slug.current,
           coverImage,
+          content,
           duration
       }`;
 
@@ -17,6 +18,9 @@ export async function getSimplePosts() {
 export async function getPost(slug: string) {
   const query = `*[_type == "blog" && slug.current == $slug][0] {
       title,
+      smallDescription,
+      "currentSlug": slug.current,
+      duration,
       content,
       coverImage
     }`;

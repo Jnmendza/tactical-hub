@@ -16,6 +16,7 @@ export interface SimpleBlogCard {
   smallDescription: string;
   currentSlug: string;
   duration: string;
+  content: any;
   coverImage: any;
 }
 

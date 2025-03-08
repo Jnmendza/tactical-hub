@@ -6,7 +6,7 @@ import { SimpleBlogCard } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 import BlogHeader from "@/components/BlogHeader";
-
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 export const revalidate = 30;
 
 export default async function Blog() {
@@ -14,6 +14,33 @@ export default async function Blog() {
   if (!data || data.length === 0) return <p>No posts available.</p>;
 
   const [headerPost, ...posts] = data;
+  const validPosts = posts.filter((post) => post.coverImage?.asset?._ref);
+
+  const CardImage = ({
+    coverImage,
+    title,
+  }: {
+    coverImage: any;
+    title: string;
+  }) => {
+    if (!coverImage || !coverImage.asset?._ref) {
+      console.warn("Invalid coverImage:", coverImage);
+      return (
+        <div className='flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100'></div>
+      );
+    }
+    return (
+      <div className='relative w-full h-40 md:h-60 lg:h-72'>
+        <Image
+          src={urlFor(coverImage).url()}
+          alt={title}
+          fill
+          className='rounded-t-lg object-cover'
+        />
+      </div>
+    );
+  };
+  const expandedIndices = [3, 6, 10, 14, 17]; // Customize this array to control which posts expand
 
   return (
     <div>
@@ -21,30 +48,18 @@ export default async function Blog() {
       <BlogHeader post={headerPost} />
 
       {/* Blog Grid for Remaining Posts */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mt-10'>
-        {posts.map((post, index) => (
-          <Card key={index} className='w-full border border-secondary-green'>
-            <Image
-              src={urlFor(post.coverImage).url()}
-              alt={post.title}
-              width={600}
-              height={500}
-              className='rounded-t-lg h-[200px] object-cover'
+      <div className='grid grid-cols-1 gap-5 mt-10'>
+        <BentoGrid className='mx-auto'>
+          {validPosts.map(({ title, smallDescription, coverImage }, index) => (
+            <BentoGridItem
+              key={index}
+              title={title}
+              description={smallDescription}
+              header={<CardImage coverImage={coverImage} title={title} />}
+              className={expandedIndices.includes(index) ? "md:col-span-2" : ""}
             />
-            <CardContent className='mt-5 text-black dark:text-mint-green'>
-              <h3 className='text-lg line-clamp-2 font-bold'>{post.title}</h3>
-              <p className='line-clamp-3 text-sm mt-2 prose prose-blue dark:prose-invert'>
-                {post.smallDescription}
-              </p>
-              <Button
-                asChild
-                className='w-full mt-7 bg-black dark:bg-mint-green'
-              >
-                <Link href={`/blog/${post.currentSlug}`}>Read More</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+          ))}
+        </BentoGrid>
       </div>
     </div>
   );
