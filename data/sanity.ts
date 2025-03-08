@@ -3,12 +3,14 @@ import { sanityClient } from "@/lib/sanity";
 export async function getSimplePosts() {
   const query = `
           *[_type == 'blog'] | order(_createdAt desc) {
-      title,
+          title,
           smallDescription,
           "currentSlug": slug.current,
           coverImage,
           content,
-          duration
+          duration,
+          publishedAt,
+    "categoryTags": categories[]->title
       }`;
 
   const data = await sanityClient().fetch(query);

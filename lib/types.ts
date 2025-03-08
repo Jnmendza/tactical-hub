@@ -17,7 +17,9 @@ export interface SimpleBlogCard {
   currentSlug: string;
   duration: string;
   content: any;
+  publishedAt: Date;
   coverImage: any;
+  categoryTags: string[];
 }
 
 export interface BlogPost {
