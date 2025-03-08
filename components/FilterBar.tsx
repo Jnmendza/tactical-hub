@@ -26,43 +26,59 @@ const FilterBar = ({
   }, []);
 
   const toggleCategory = (category: string) => {
-    setActiveFilter((prevFilters: string[]) => {
-      if (prevFilters.includes(category)) {
-        return prevFilters.filter((f) => f !== category); // Remove if already selected
-      } else {
-        return [...prevFilters, category]; // Add if not selected
-      }
-    });
+    setActiveFilter(
+      (prevFilters) =>
+        prevFilters.includes(category)
+          ? prevFilters.filter((f) => f !== category) // Remove if already selected
+          : [...prevFilters, category] // Add if not selected
+    );
   };
 
   return (
-    <div className='flex items-center justify-between bg-white border rounded-lg shadow-md p-3'>
+    <div className='flex flex-wrap md:flex-nowrap items-center justify-between bg-mint-green border rounded-lg shadow-md w-full md:w-[70%] gap-4'>
       {/* View All Button */}
       <button
-        className='bg-blue-700 text-white px-4 py-2 rounded-l-lg font-bold'
-        onClick={() => setActiveFilter([])} // Reset to show all
+        className='bg-primary-green text-secondary-green p-4 rounded-lg font-bold w-full h-full md:w-auto'
+        onClick={() => {
+          setActiveFilter([]); // Reset category filters
+          setNewFilter(false); // Reset "New" filter
+        }}
       >
         View All
       </button>
 
       {/* Filter Text & Checkboxes */}
-      <div className='flex items-center space-x-4'>
-        <span className='text-gray-700 font-medium'>Filter By:</span>
+      <div className='flex flex-wrap md:flex-nowrap items-center justify-center md:justify-start space-x-4 md:space-x-6 text-secondary-green mr-4'>
+        <span className='font-medium whitespace-nowrap'>Filter By:</span>
 
-        {categories.map((category) => (
-          <label
-            key={category}
-            className='flex items-center space-x-2 cursor-pointer'
-          >
-            <input
-              type='checkbox'
-              checked={activeFilter.includes(category)}
-              onChange={() => toggleCategory(category)}
-              className='form-checkbox h-5 w-5 text-blue-700'
-            />
-            <span className='text-blue-700 font-medium'>{category}</span>
-          </label>
-        ))}
+        {/* "New" Filter Checkbox */}
+        <label className='flex items-center space-x-2 cursor-pointer'>
+          <input
+            type='checkbox'
+            checked={newFilter}
+            onChange={() => setNewFilter(!newFilter)}
+            className='form-checkbox h-5 w-5 accent-mint-green'
+          />
+          <span className='font-medium'>New</span>
+        </label>
+
+        {/* Dynamic Category Filters */}
+        <div className='flex flex-wrap gap-3'>
+          {categories.map((category) => (
+            <label
+              key={category}
+              className='flex items-center space-x-2 cursor-pointer'
+            >
+              <input
+                type='checkbox'
+                checked={activeFilter.includes(category)}
+                onChange={() => toggleCategory(category)}
+                className='form-checkbox h-5 w-5 accent-mint-green'
+              />
+              <span className='font-medium'>{category}</span>
+            </label>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import BlogHeader from "@/components/BlogHeader";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { urlFor } from "@/lib/sanity";
 import Image from "next/image";
+import { justAnotherHand } from "@/lib/fonts";
 
 export default function BlogPage({ posts }: { posts: SimpleBlogCard[] }) {
   const [activeFilter, setActiveFilter] = useState<string[]>([]);
@@ -42,12 +43,17 @@ export default function BlogPage({ posts }: { posts: SimpleBlogCard[] }) {
       {headerPost && <BlogHeader post={headerPost} />}
 
       {/* Filter Bar */}
-      <FilterBar
-        activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
-        newFilter={newFilter}
-        setNewFilter={setNewFilter}
-      />
+      <div className='flex  justify-evenly mt-10'>
+        <h1 className={`${justAnotherHand.className} text-7xl text-mint-green`}>
+          Blog Posts
+        </h1>
+        <FilterBar
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          newFilter={newFilter}
+          setNewFilter={setNewFilter}
+        />
+      </div>
 
       {/* Blog Grid */}
       <div className='grid grid-cols-1 gap-5 mt-10'>
