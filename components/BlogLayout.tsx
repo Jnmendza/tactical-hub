@@ -56,11 +56,12 @@ export default function BlogPage({ posts }: { posts: SimpleBlogCard[] }) {
       <div className='grid grid-cols-1 gap-5 mt-10'>
         <BentoGrid className='mx-auto'>
           {filteredPosts.map(
-            ({ title, smallDescription, coverImage }, index) => (
+            ({ title, smallDescription, coverImage, categoryTags }, index) => (
               <BentoGridItem
                 key={index}
                 title={title}
                 description={smallDescription}
+                tags={categoryTags || []}
                 header={
                   <div className='relative w-full h-40 md:h-60 lg:h-72'>
                     <Image

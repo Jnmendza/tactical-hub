@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Badge } from "./badge";
 
 export const BentoGrid = ({
   className,
@@ -25,11 +26,13 @@ export const BentoGridItem = ({
   description,
   header,
   icon,
+  tags,
 }: {
   className?: string;
   title?: string | React.ReactNode;
   description?: string | React.ReactNode;
   header?: React.ReactNode;
+  tags: string[];
   icon?: React.ReactNode;
 }) => {
   return (
@@ -47,6 +50,13 @@ export const BentoGridItem = ({
         </div>
         <div className='font-sans font-normal text-neutral-600 text-xs dark:text-neutral-300'>
           {description}
+        </div>
+        <div className='mt-2 flex justify-end'>
+          {tags.map((tag, index) => (
+            <Badge key={index} variant='default'>
+              {tag}
+            </Badge>
+          ))}
         </div>
       </div>
     </div>
