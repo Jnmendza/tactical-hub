@@ -9,6 +9,7 @@ import {
   Home,
   NotebookPen,
   ArrowDownNarrowWide,
+  Trophy,
 } from "lucide-react";
 import React, { useState } from "react";
 import { ArrowDown as Arrow, SecondaryLogo } from "./svgs";
@@ -63,6 +64,15 @@ const Sidebar = ({ isExpanded, setIsExpanded }: SidebarProps) => {
               <Home size={24} />
               {isExpanded && <span className='ml-2'>HOME</span>}
             </Link>
+
+            <Link
+              href='/about'
+              className='flex items-center space-x-2 hover:text-white'
+            >
+              <Trophy size={24} />
+              {isExpanded && <span className='ml-2'>About</span>}
+            </Link>
+
             <Link
               href='/blog'
               className='flex items-center space-x-2 hover:text-white'
