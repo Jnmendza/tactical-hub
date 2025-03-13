@@ -1,4 +1,5 @@
 import FormationDesigner from "@/components/FormationDesigner";
+import { GoogleSigninButton } from "@/components/GoogleSigninButton";
 
 export default function Home() {
   return (
@@ -7,6 +8,7 @@ export default function Home() {
         <h1 className='text-4xl font-bold text-white text-center mb-8'>
           Football Formation Designer
         </h1>
+        <GoogleSigninButton />
         <FormationDesigner />
       </div>
     </main>
