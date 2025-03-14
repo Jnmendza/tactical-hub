@@ -1,35 +1,26 @@
 "use server";
 import { createClientForServer } from "@/utils/supabase/server";
+import { Player } from "@prisma/client";
 import { Provider } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 
-const signInWith = async (provider: Provider) => {
+const signInWithGoogle = async (): Promise<string> => {
   const supabase = await createClientForServer();
   const auth_callback_url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/callback`;
-  console.log("URL", auth_callback_url);
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider,
+    provider: "google",
     options: {
       redirectTo: auth_callback_url,
     },
   });
 
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-  console.log("SIGN IN GOOGLE", sessionData, sessionError);
-
   if (error) {
     throw error;
   }
 
-  redirect(data?.url);
-};
-
-const signInWithGoogle = () => {
-  return new Promise((resolve, reject) => {
-    signInWith("google").then(resolve).catch(reject);
-  });
+  // Return the URL instead of redirecting
+  return data.url;
 };
 
 const signOut = async () => {
@@ -41,3 +32,38 @@ const signOut = async () => {
 };
 
 export { signInWithGoogle, signOut };
+
+export const saveFormationToDb = async (
+  players: Player[],
+  formationName: string
+) => {
+  const supabase = await createClientForServer();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    throw new Error("User not authenticated");
+  }
+
+  // Add formationId to players if required
+  const playersWithFormationId = players.map((player) => ({
+    ...player,
+    formationId: 1, // Replace with the actual formation ID if needed
+  }));
+
+  const { data, error } = await supabase.from("formations").insert([
+    {
+      user_id: user.id,
+      formation: playersWithFormationId,
+      name: formationName,
+    },
+  ]);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};

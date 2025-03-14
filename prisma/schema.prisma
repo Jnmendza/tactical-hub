@@ -85,6 +85,6 @@ model Player {
   name        String   // Name (e.g., Goalkeeper, Right Back)
   x           Int      // X-coordinate on the field
   y           Int      // Y-coordinate on the field
-  formationId Int      // Foreign key to Formation
-  formation   Formation @relation(fields: [formationId], references: [id])
+  formationId Int?      // Foreign key to Formation
+  formation   Formation? @relation(fields: [formationId], references: [id])
 }

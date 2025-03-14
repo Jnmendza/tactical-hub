@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +17,13 @@ import { Player } from "@/lib/types";
 import html2canvas from "html2canvas";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { saveFormationToDb, signInWithGoogle } from "@/utils/actions";
+import { useRouter } from "next/navigation";
+
+import { createClientForBrowser } from "@/utils/supabase/client";
 
 export default function FormationDesigner() {
+  const router = useRouter();
   const [players, setPlayers] = useState<Player[]>(formations["4-4-2"]);
   const [currentFormation, setCurrentFormation] = useState<string>("4-4-2");
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
@@ -27,6 +31,20 @@ export default function FormationDesigner() {
 
   // Selected player for editing
   const selectedPlayer = players.find((p) => p.id === selectedPlayerId) || null;
+
+  const handleSaveFormation = async () => {
+    const confirmLogin = window.confirm(
+      "You must sign in with Google to save formations. Sign in now?"
+    );
+    if (confirmLogin) {
+      try {
+        const url = await signInWithGoogle();
+        router.push(url);
+      } catch (error) {
+        console.error("Error signing in with Goole:", error);
+      }
+    }
+  };
 
   const handleFormationChange = (value: string) => {
     setCurrentFormation(value);
@@ -155,6 +173,13 @@ export default function FormationDesigner() {
                   >
                     <RotateCcw className='mr-2 h-4 w-4' />
                     Reset Formation
+                  </Button>
+                  <Button
+                    variant='default'
+                    className='w-full'
+                    onClick={handleSaveFormation}
+                  >
+                    Save Formation
                   </Button>
                 </div>
               </div>

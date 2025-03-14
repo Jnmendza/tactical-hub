@@ -1,5 +1,6 @@
 import FormationDesigner from "@/components/FormationDesigner";
 import { GoogleSigninButton } from "@/components/GoogleSigninButton";
+import { SignOutButton } from "@/components/SignOutButton";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
           Football Formation Designer
         </h1>
         <GoogleSigninButton />
+        <SignOutButton />
         <FormationDesigner />
       </div>
     </main>
