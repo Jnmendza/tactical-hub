@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  teamId    Int
+  createdAt DateTime @default(now())
+  teamCode  String
+  team      Team     @relation(fields: [teamId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Formation {
+  id        Int       @id @default(autoincrement())
+  name      String
+  userId    String
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
+  players   Player[]
+}
+
+model League {
+  id        Int      @id @default(autoincrement())
+  name      String
+  country   String
+  logoUrl   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  endDate   DateTime
+  flagUrl   String
+  startDate DateTime
+  type      String
+  team      Team[]
+}
+
+model Team {
+  id        Int        @id @default(autoincrement())
+  name      String
+  logoUrl   String
+  leagueId  Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime
+  code      String?
+  country   String
+  founded   Int?
+  venueId   Int?
+  favorite  Favorite[]
+  league    League     @relation(fields: [leagueId], references: [id])
+  venue     Venue?     @relation(fields: [venueId], references: [id])
+}
+
+model User {
+  id          String     @id
+  email       String     @unique
+  image       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime
+  userName    String?
+  favorite    Favorite[]
+  formations  Formation[]
+}
+
+model Venue {
+  id       Int     @id @default(autoincrement())
+  name     String
+  address  String?
+  city     String
+  capacity Int?
+  surface  String?
+  imageUrl String
+  team     Team[]
+}
+
+model Player {
+  id          Int      @id @default(autoincrement())
+  number      Int      // Jersey number
+  position    String   // Position (e.g., GK, CB, ST)
+  name        String   // Name (e.g., Goalkeeper, Right Back)
+  x           Int      // X-coordinate on the field
+  y           Int      // Y-coordinate on the field
+  formationId Int?      // Foreign key to Formation
+  formation   Formation? @relation(fields: [formationId], references: [id])
+}
