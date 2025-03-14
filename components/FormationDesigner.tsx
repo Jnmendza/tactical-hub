@@ -99,9 +99,9 @@ export default function FormationDesigner() {
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-      <Card className='lg:col-span-2 '>
-        <CardContent className='p-6'>
-          <div ref={fieldRef} className='relative w-full'>
+      <Card className='lg:col-span-2'>
+        <CardContent className='p-6 h-full'>
+          <div ref={fieldRef} className='relative w-full h-full'>
             <FootballField
               players={players}
               onPlayerMove={handlePlayerPositionChange}

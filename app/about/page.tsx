@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { justAnotherHand } from "@/lib/fonts";
 
 export default function About() {
   // Refs for scroll detection
@@ -31,35 +32,39 @@ export default function About() {
       // Intro section
       circle1: { top: "30%", left: "20%" },
       circle2: { top: "30%", left: "80%" },
-      arrow: { d: "M 20 30 L 80 30" }, // Horizontal arrow
+      arrow1: { d: "M 20 30 L 80 30" }, // Horizontal arrow
+      arrow2: { d: "M 20 30 L 80 30" }, // Horizontal arrow
     },
     {
       // Why section
       circle1: { top: "50%", left: "50%" },
       circle2: { top: "70%", left: "30%" },
-      arrow: { d: "M 50 50 Q 60 70 30 70" }, // Curved arrow
+      arrow1: { d: "M 50 50 Q 60 70 30 70" }, // Curved arrow
+      arrow2: { d: "M 50 50 Q 60 70 30 70" }, // Curved arrow
     },
     {
       // Who section
       circle1: { top: "40%", left: "40%" },
       circle2: { top: "60%", left: "60%" },
-      arrow: { d: "M 40 40 L 60 60" }, // Diagonal arrow
+      arrow1: { d: "M 40 40 L 60 60" }, // Diagonal arrow
+      arrow2: { d: "M 40 40 L 60 60" }, // Diagonal arrow
     },
     {
       // Me section
       circle1: { top: "20%", left: "50%" },
       circle2: { top: "80%", left: "50%" },
-      arrow: { d: "M 420 235 L 50 230" }, // Vertical arrow
+      arrow1: { d: "M 400 40 L 100 230" }, // Vertical arrow
+      arrow2: { d: "M 420 235 L 50 230" }, // Vertical arrow
     },
   ];
-
+  const transition = { duration: 4, yoyo: Infinity, ease: "easeInOut" };
   return (
     <div className='relative min-h-screen bg-green-600 overflow-hidden'>
       {/* Whiteboard Texture (optional gradient) */}
       <div className='absolute inset-0 bg-gradient-to-br from-green-600/90 to-green-700/90 opacity-50'></div>
 
       {/* Whiteboard Frame */}
-      <div className='relative text-secondary-green min-h-screen border-2 border-white/80 m-4 rounded-lg p-6 flex flex-col justify-center items-center text-center'>
+      <div className='relative text-mint-green min-h-screen border-2 border-white/80 m-4 rounded-lg p-6 flex flex-col justify-center items-center text-center'>
         {/* Header */}
         <h1 className='text-4xl md:text-5xl font-bold text-white mb-12'>
           About Tactical Hub
@@ -111,7 +116,7 @@ export default function About() {
                   </marker>
                 </defs>
                 <path
-                  d={plays[0].arrow.d}
+                  d={plays[0].arrow2.d}
                   fill='none'
                   stroke='white'
                   strokeWidth='4'
@@ -130,11 +135,16 @@ export default function About() {
             variants={textVariants}
             className='w-full md:w-1/2 text-left'
           >
-            <p className='text-2xl md:text-3xl font-bold text-shadow-md'>
-              Hey, welcome to Tactical Hub—your dugout to channel Pep, Klopp, or
-              Mourinho without a clipboard or a £100m budget. I’m [Your Name], a
-              football nut who built this to turn tactics into something you can
-              touch, drag, and play with.
+            <h1
+              className={`${justAnotherHand.className} text-7xl font-bold text-secondary-green`}
+            >
+              Hey, welcome to Tactical Hub
+            </h1>
+            <p className='text-xl md:text-2xl font-bold text-shadow-md'>
+              —your dugout to channel Pep, Klopp, or Mourinho without a
+              clipboard or a $100m budget. I’m Jonathan, a football nut who
+              built this to turn tactics into something you can touch, drag, and
+              play with.
             </p>
           </motion.section>
         </div>
@@ -149,12 +159,17 @@ export default function About() {
             variants={textVariants}
             className='w-full md:w-1/2 text-left'
           >
-            <p className='text-2xl md:text-3xl font-bold text-shadow-md'>
-              Why’d I build this? I’ve been hooked on football since the ‘90s,
-              cheering for Mexico through Cuauhtémoc Blanco’s stepovers and
-              Jorge Campos’ neon kits—those wild El Tri days. This app’s my
-              mashup of that passion with Next.js, Tailwind, Sanity, and a dash
-              of Prisma/Supabase—proof I can code a pitch as fierce as Blanco’s
+            <h1
+              className={`${justAnotherHand.className} text-7xl font-bold text-secondary-green`}
+            >
+              Why’d I build this?
+            </h1>
+            <p className='text-xl md:text-2xl font-bold text-shadow-md'>
+              I’ve been hooked on football since the ‘90s, cheering for Mexico
+              through Cuauhtémoc Blanco’s stepovers and Jorge Campos’ neon
+              kits—those wild El Tri days. This app’s my mashup of that passion
+              with Next.js, Tailwind, Sanity, and a dash of
+              Prisma/Supabase—proof I can code a pitch as fierce as Blanco’s
               flair.
             </p>
           </motion.section>
@@ -203,7 +218,7 @@ export default function About() {
                   </marker>
                 </defs>
                 <path
-                  d={plays[1].arrow.d}
+                  d={plays[1].arrow2.d}
                   fill='none'
                   stroke='white'
                   strokeWidth='4'
@@ -261,7 +276,7 @@ export default function About() {
                   </marker>
                 </defs>
                 <path
-                  d={plays[2].arrow.d}
+                  d={plays[2].arrow2.d}
                   fill='none'
                   stroke='white'
                   strokeWidth='4'
@@ -280,11 +295,16 @@ export default function About() {
             variants={textVariants}
             className='w-full md:w-1/2 text-left'
           >
-            <p className='text-2xl md:text-3xl font-bold text-shadow-md'>
-              Who’s this for? You—the fan yelling about formations at halftime,
-              the coach plotting Sunday league wins, or the dreamer scripting a
-              CONCACAF upset. It’s not about subscriptions (it’s fake, duh)—it’s
-              about sharing the football buzz.
+            <h1
+              className={`${justAnotherHand.className} text-7xl font-bold text-secondary-green`}
+            >
+              Who’s this for?
+            </h1>
+            <p className='text-xl md:text-2xl font-bold text-shadow-md'>
+              You—the fan yelling about formations at halftime, the coach
+              plotting Sunday league wins, or the dreamer scripting a CONCACAF
+              upset. It’s not about subscriptions (it’s fake, duh)—it’s about
+              sharing the football buzz.
             </p>
           </motion.section>
         </div>
@@ -299,11 +319,16 @@ export default function About() {
             variants={textVariants}
             className='w-full md:w-1/2 text-left'
           >
-            <p className='text-2xl md:text-3xl font-bold text-shadow-md'>
-              Me? A [Your City]-based dev who’d rather dissect Mexico’s ‘98
-              World Cup run than chat about rain. When I’m not coding or
-              reliving Campos’ saves, I’m here—building this for the love of the
-              game. Hit me up at @TacticalHubDev on X!
+            <h1
+              className={`${justAnotherHand.className} text-7xl font-bold text-secondary-green`}
+            >
+              Me?
+            </h1>
+            <p className='text-xl md:text-2xl font-bold'>
+              A San Diego-based dev who’d rather dissect Mexico’s ‘98 World Cup
+              run than chat about rain. When I’m not coding or reliving Campos’
+              saves, I’m here—building this for the love of the game. Hit me up
+              at @TacticalHubDev on X!
             </p>
           </motion.section>
 
@@ -315,18 +340,30 @@ export default function About() {
             variants={textVariants}
           >
             <div className='absolute inset-0'>
-              {/* Circle 1 (Fixed) */}
-              <div
-                className='absolute w-12 h-12 rounded-full bg-white/20'
+              {/* Circle 1 (Now Moves Along the Solid Arrow Path) */}
+              <motion.div
+                className='absolute w-12 h-12 rounded-full bg-red-600 cursor-pointer z-10'
                 style={{
-                  top: plays[3].circle1.top,
-                  left: plays[3].circle1.left,
+                  top: 0,
+                  left: 0,
+                  offsetPath: `path('${plays[3].arrow1.d}')`,
+                  offsetDistance: "0%",
+                }}
+                animate={{
+                  offsetDistance: ["0%", "100%", "0%"],
+                }} // Smoothly increasing increments
+                transition={{
+                  duration: 6, // Slow and natural movement
+                  ease: "easeInOut",
+                  repeat: Infinity, // Infinite loop
+                  repeatType: "reverse", // Smoothly moves back
+                  repeatDelay: 1.5, // Small pause before reversing
                 }}
               />
 
               {/* Circle 2 (Draggable) */}
               <motion.div
-                className='absolute w-12 h-12 rounded-full bg-white/20 cursor-pointer z-10'
+                className='absolute w-12 h-12 rounded-full bg-blue-600 cursor-pointer z-10'
                 style={{
                   top: plays[3].circle2.top,
                   left: plays[3].circle2.left,
@@ -365,8 +402,8 @@ export default function About() {
                 </defs>
 
                 {/* Dotted Line for Circle 2 (Draggable) */}
-                <path
-                  d={plays[3].arrow.d}
+                <motion.path
+                  d={plays[3].arrow2.d}
                   fill='none'
                   stroke='white'
                   strokeWidth='4'
@@ -375,8 +412,8 @@ export default function About() {
                 />
 
                 {/* Solid Line for Circle 1 (Fixed) */}
-                <path
-                  d='M 400 40 L 100 230' // Change coordinates for new solid arrow
+                <motion.path
+                  d={plays[3].arrow1.d} // Change coordinates for new solid arrow
                   fill='none'
                   stroke='white'
                   strokeWidth='4' // Solid line (no dash effect)

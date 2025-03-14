@@ -103,7 +103,7 @@ export default function FootballField({
   return (
     <div
       ref={fieldRef}
-      className='relative w-full aspect-[3/4] bg-green-600 rounded-lg overflow-hidden'
+      className='relative w-full h-full aspect-[3/4] bg-green-600 rounded-lg overflow-hidden'
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
