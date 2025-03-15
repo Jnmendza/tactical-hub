@@ -1,8 +1,10 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useMotionValue } from "framer-motion";
 import { useRef } from "react";
 import { justAnotherHand } from "@/lib/fonts";
+import { GlareCard } from "@/components/ui/glare-card";
+import Image from "next/image";
 
 export default function About() {
   // Refs for scroll detection
@@ -26,28 +28,30 @@ export default function About() {
     },
   };
 
+  const offsetDistance = useMotionValue("0%");
+
   // Fixed positions for circles and arrows in each section
   const plays = [
     {
       // Intro section
-      circle1: { top: "30%", left: "20%" },
-      circle2: { top: "30%", left: "80%" },
-      arrow1: { d: "M 20 30 L 80 30" }, // Horizontal arrow
-      arrow2: { d: "M 20 30 L 80 30" }, // Horizontal arrow
+      circle1: { top: "0%", left: "0%" },
+      circle2: { top: "4%", left: "50%" },
+      arrow1: { d: "M 500 180 L 300 160 L 150 130 L 200 90 L 80 50" }, // Horizontal arrow
+      arrow2: { d: "M 420 30 L 80 30" }, // Horizontal arrow
     },
     {
       // Why section
-      circle1: { top: "50%", left: "50%" },
-      circle2: { top: "70%", left: "30%" },
-      arrow1: { d: "M 50 50 Q 60 70 30 70" }, // Curved arrow
-      arrow2: { d: "M 50 50 Q 60 70 30 70" }, // Curved arrow
+      circle1: { top: "0%", left: "0%" },
+      circle2: { top: "60%", left: "75%" },
+      arrow1: { d: "M 100 230 L 400 40" }, // Solid
+      arrow2: { d: "M 100 300 L 100 20" }, // Dotted
     },
     {
       // Who section
       circle1: { top: "40%", left: "40%" },
-      circle2: { top: "60%", left: "60%" },
-      arrow1: { d: "M 40 40 L 60 60" }, // Diagonal arrow
-      arrow2: { d: "M 40 40 L 60 60" }, // Diagonal arrow
+      circle2: { top: "70%", left: "30%" },
+      arrow1: { d: "M 60 80 C 0 -40, 350 0, 450 230" }, // Quadratic Bezier Curve (Half-circle effect)
+      arrow2: { d: "M 60 200 L 320 200" }, // Diagonal arrow
     },
     {
       // Me section
@@ -57,7 +61,7 @@ export default function About() {
       arrow2: { d: "M 420 235 L 50 230" }, // Vertical arrow
     },
   ];
-  const transition = { duration: 4, yoyo: Infinity, ease: "easeInOut" };
+
   return (
     <div className='relative min-h-screen bg-green-600 overflow-hidden'>
       {/* Whiteboard Texture (optional gradient) */}
@@ -80,29 +84,45 @@ export default function About() {
             variants={textVariants}
           >
             <div className='absolute inset-0'>
-              {/* Circle 1 (Fixed) */}
-              <div
-                className='absolute w-12 h-12 rounded-full bg-white/20'
+              {/* Circle 1 (Fixed) Red */}
+              <motion.div
+                className='absolute w-12 h-12 rounded-full bg-red-600 z-10 flex items-center justify-center text-white font-bold text-lg'
                 style={{
                   top: plays[0].circle1.top,
                   left: plays[0].circle1.left,
+                  offsetPath: `path('${plays[0].arrow1.d}')`,
+                  offsetDistance: "0%",
                 }}
-              />
+                animate={{
+                  offsetDistance: ["0%", "100%", "0%"],
+                }} // Smoothly increasing increments
+                transition={{
+                  duration: 6, // Slow and natural movement
+                  ease: "easeInOut",
+                  repeat: Infinity, // Infinite loop
+                  repeatType: "reverse", // Smoothly moves back
+                  repeatDelay: 1.5, // Small pause before reversing
+                }}
+              >
+                <span style={{ transform: "rotate(180deg)" }}>24</span>
+              </motion.div>
 
-              {/* Circle 2 (Draggable) */}
+              {/* Circle 2 (Draggable) Blue */}
               <motion.div
-                className='absolute w-12 h-12 rounded-full bg-white/20 cursor-pointer z-10'
+                className='absolute w-12 h-12 rounded-full bg-blue-600 cursor-pointer z-10 flex items-center justify-center text-white font-bold text-lg'
                 style={{
                   top: plays[0].circle2.top,
                   left: plays[0].circle2.left,
                 }}
                 drag='x' // Only allow horizontal drag
-                dragConstraints={{ left: 20, right: 80 }} // Constrain to arrow length
-                dragElastic={0}
-              />
+                dragConstraints={{ left: 0, right: 20 }} // Constrain to arrow length
+                dragElastic={0.3}
+              >
+                <span>16</span>
+              </motion.div>
 
               {/* Dotted Arrow */}
-              <svg className='absolute inset-0 w-full h-full opacity-20'>
+              <svg className='absolute inset-0 w-full h-full'>
                 <defs>
                   <marker
                     id='arrowhead-intro'
@@ -114,8 +134,18 @@ export default function About() {
                   >
                     <polygon points='0 0, 10 3.5, 0 7' fill='white' />
                   </marker>
+                  <marker
+                    id='arrowhead-intro-solid'
+                    markerWidth='10'
+                    markerHeight='7'
+                    refX='9'
+                    refY='3.5'
+                    orient='auto'
+                  >
+                    <polygon points='0 0, 10 3.5, 0 7' fill='white' />
+                  </marker>
                 </defs>
-                <path
+                <motion.path
                   d={plays[0].arrow2.d}
                   fill='none'
                   stroke='white'
@@ -123,7 +153,15 @@ export default function About() {
                   strokeDasharray='10 10'
                   markerEnd='url(#arrowhead-intro)'
                 />
+                <motion.path
+                  d={plays[0].arrow1.d} // Change coordinates for new solid arrow
+                  fill='none'
+                  stroke='white'
+                  strokeWidth='4' // Solid line (no dash effect)
+                  markerEnd='url(#arrowhead-intro-solid)'
+                />
               </svg>
+              {/*Solid line */}
             </div>
           </motion.div>
 
@@ -176,57 +214,19 @@ export default function About() {
 
           {/* Draggable Play (Right) */}
           <motion.div
-            className='w-full md:w-1/2 h-64 relative'
+            className='w-full md:w-1/2 relative flex items-center justify-center'
             initial='hidden'
             animate={whyInView ? "visible" : "hidden"}
             variants={textVariants}
           >
-            <div className='absolute inset-0'>
-              {/* Circle 1 (Fixed) */}
-              <div
-                className='absolute w-12 h-12 rounded-full bg-white/20'
-                style={{
-                  top: plays[1].circle1.top,
-                  left: plays[1].circle1.left,
-                }}
+            <GlareCard>
+              <Image
+                src='/assets/me-tv.jpg'
+                alt='jon'
+                layout='fill'
+                objectFit='cover'
               />
-
-              {/* Circle 2 (Draggable) */}
-              <motion.div
-                className='absolute w-12 h-12 rounded-full bg-white/20 cursor-pointer z-10'
-                style={{
-                  top: plays[1].circle2.top,
-                  left: plays[1].circle2.left,
-                }}
-                drag='x' // Only allow horizontal drag
-                dragConstraints={{ left: 30, right: 70 }} // Constrain to arrow length
-                dragElastic={0}
-              />
-
-              {/* Dotted Arrow */}
-              <svg className='absolute inset-0 w-full h-full opacity-20'>
-                <defs>
-                  <marker
-                    id='arrowhead-why'
-                    markerWidth='10'
-                    markerHeight='7'
-                    refX='9'
-                    refY='3.5'
-                    orient='auto'
-                  >
-                    <polygon points='0 0, 10 3.5, 0 7' fill='white' />
-                  </marker>
-                </defs>
-                <path
-                  d={plays[1].arrow2.d}
-                  fill='none'
-                  stroke='white'
-                  strokeWidth='4'
-                  strokeDasharray='10 10'
-                  markerEnd='url(#arrowhead-why)'
-                />
-              </svg>
-            </div>
+            </GlareCard>
           </motion.div>
         </div>
 
@@ -236,36 +236,65 @@ export default function About() {
           <motion.div
             className='w-full md:w-1/2 h-64 relative'
             initial='hidden'
-            animate={whoInView ? "visible" : "hidden"}
+            animate={meInView ? "visible" : "hidden"}
             variants={textVariants}
           >
             <div className='absolute inset-0'>
-              {/* Circle 1 (Fixed) */}
-              <div
-                className='absolute w-12 h-12 rounded-full bg-white/20'
+              {/* Circle 1 (Now Moves Along the Solid Arrow Path) */}
+              <motion.div
+                className='absolute w-12 h-12 rounded-full bg-red-600 cursor-pointer z-10 flex items-center justify-center text-white font-bold text-lg"'
                 style={{
-                  top: plays[2].circle1.top,
-                  left: plays[2].circle1.left,
+                  top: 0,
+                  left: 0,
+                  offsetPath: `path('${plays[2].arrow1.d}')`,
+                  offsetDistance: "0%",
                 }}
-              />
+                animate={{
+                  offsetDistance: ["0%", "100%", "0%"],
+                }} // Smoothly increasing increments
+                transition={{
+                  duration: 6, // Slow and natural movement
+                  ease: "easeInOut",
+                  repeat: Infinity, // Infinite loop
+                  repeatType: "reverse", // Smoothly moves back
+                  repeatDelay: 1.5, // Small pause before reversing
+                }}
+              >
+                <span>9</span>
+              </motion.div>
 
               {/* Circle 2 (Draggable) */}
               <motion.div
-                className='absolute w-12 h-12 rounded-full bg-white/20 cursor-pointer z-10'
+                className='absolute w-12 h-12 rounded-full bg-blue-600 cursor-pointer z-10 flex items-center justify-center text-white font-bold text-lg"'
                 style={{
                   top: plays[2].circle2.top,
                   left: plays[2].circle2.left,
                 }}
                 drag='x' // Only allow horizontal drag
-                dragConstraints={{ left: 40, right: 60 }} // Constrain to arrow length
-                dragElastic={0}
-              />
+                dragConstraints={{ left: -100, right: 50 }} // Constrain to arrow length
+                dragElastic={0.3}
+                dragDirectionLock={true}
+              >
+                <span>14</span>
+              </motion.div>
 
-              {/* Dotted Arrow */}
-              <svg className='absolute inset-0 w-full h-full opacity-20'>
+              <svg className='absolute inset-0 w-full h-full'>
                 <defs>
+                  {/* Marker for Dotted Arrow (Circle 2) */}
                   <marker
-                    id='arrowhead-who'
+                    id='arrowhead-dotted'
+                    markerWidth='10'
+                    markerHeight='7'
+                    refX='9'
+                    refY='3.5'
+                    orient='auto'
+                  >
+                    <polygon points='0 0, 10 3.5, 0 7' fill='white' />
+                  </marker>
+
+                  {/* Marker for Solid Arrow (Circle 1) */}
+                  <marker
+                    id='arrowhead-solid'
                     markerWidth='10'
                     markerHeight='7'
                     refX='9'
@@ -275,13 +304,24 @@ export default function About() {
                     <polygon points='0 0, 10 3.5, 0 7' fill='white' />
                   </marker>
                 </defs>
-                <path
+
+                {/* Dotted Line for Circle 2 (Draggable) */}
+                <motion.path
                   d={plays[2].arrow2.d}
                   fill='none'
                   stroke='white'
                   strokeWidth='4'
-                  strokeDasharray='10 10'
-                  markerEnd='url(#arrowhead-who)'
+                  strokeDasharray='10 10' // Dotted effect
+                  markerEnd='url(#arrowhead-dotted)'
+                />
+
+                {/* Solid Line for Circle 1 (Fixed) */}
+                <motion.path
+                  d={plays[2].arrow1.d} // Change coordinates for new solid arrow
+                  fill='none'
+                  stroke='white'
+                  strokeWidth='4' // Solid line (no dash effect)
+                  markerEnd='url(#arrowhead-solid)'
                 />
               </svg>
             </div>
@@ -332,95 +372,21 @@ export default function About() {
             </p>
           </motion.section>
 
-          {/* Draggable Play (Right) */}
+          {/* Image (Right) */}
           <motion.div
-            className='w-full md:w-1/2 h-64 relative'
+            className='w-full md:w-1/2 relative flex items-center justify-center'
             initial='hidden'
             animate={meInView ? "visible" : "hidden"}
             variants={textVariants}
           >
-            <div className='absolute inset-0'>
-              {/* Circle 1 (Now Moves Along the Solid Arrow Path) */}
-              <motion.div
-                className='absolute w-12 h-12 rounded-full bg-red-600 cursor-pointer z-10'
-                style={{
-                  top: 0,
-                  left: 0,
-                  offsetPath: `path('${plays[3].arrow1.d}')`,
-                  offsetDistance: "0%",
-                }}
-                animate={{
-                  offsetDistance: ["0%", "100%", "0%"],
-                }} // Smoothly increasing increments
-                transition={{
-                  duration: 6, // Slow and natural movement
-                  ease: "easeInOut",
-                  repeat: Infinity, // Infinite loop
-                  repeatType: "reverse", // Smoothly moves back
-                  repeatDelay: 1.5, // Small pause before reversing
-                }}
+            <GlareCard>
+              <Image
+                src='/assets/me.jpg'
+                alt='jon'
+                layout='fill'
+                objectFit='cover'
               />
-
-              {/* Circle 2 (Draggable) */}
-              <motion.div
-                className='absolute w-12 h-12 rounded-full bg-blue-600 cursor-pointer z-10'
-                style={{
-                  top: plays[3].circle2.top,
-                  left: plays[3].circle2.left,
-                }}
-                drag='x' // Only allow horizontal drag
-                dragConstraints={{ left: -100, right: 50 }} // Constrain to arrow length
-                dragElastic={0.3}
-                dragDirectionLock={true}
-              />
-
-              <svg className='absolute inset-0 w-full h-full'>
-                <defs>
-                  {/* Marker for Dotted Arrow (Circle 2) */}
-                  <marker
-                    id='arrowhead-dotted'
-                    markerWidth='10'
-                    markerHeight='7'
-                    refX='9'
-                    refY='3.5'
-                    orient='auto'
-                  >
-                    <polygon points='0 0, 10 3.5, 0 7' fill='white' />
-                  </marker>
-
-                  {/* Marker for Solid Arrow (Circle 1) */}
-                  <marker
-                    id='arrowhead-solid'
-                    markerWidth='10'
-                    markerHeight='7'
-                    refX='9'
-                    refY='3.5'
-                    orient='auto'
-                  >
-                    <polygon points='0 0, 10 3.5, 0 7' fill='white' />
-                  </marker>
-                </defs>
-
-                {/* Dotted Line for Circle 2 (Draggable) */}
-                <motion.path
-                  d={plays[3].arrow2.d}
-                  fill='none'
-                  stroke='white'
-                  strokeWidth='4'
-                  strokeDasharray='10 10' // Dotted effect
-                  markerEnd='url(#arrowhead-dotted)'
-                />
-
-                {/* Solid Line for Circle 1 (Fixed) */}
-                <motion.path
-                  d={plays[3].arrow1.d} // Change coordinates for new solid arrow
-                  fill='none'
-                  stroke='white'
-                  strokeWidth='4' // Solid line (no dash effect)
-                  markerEnd='url(#arrowhead-solid)'
-                />
-              </svg>
-            </div>
+            </GlareCard>
           </motion.div>
         </div>
       </div>
