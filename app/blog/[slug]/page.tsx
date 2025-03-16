@@ -5,10 +5,13 @@ import { PortableText } from "@portabletext/react";
 import { getPost } from "@/data/sanity";
 
 export const revalidate = 30;
+export const dynamic = "force-dynamic"; // Ensures fresh fetch, avoids missing params error
 
 export async function generateStaticParams() {
   const query = `*[_type == "blog"]{ "slug": slug.current }`;
   const posts = await sanityClient().fetch(query);
+
+  console.log("Static params:", posts);
 
   return posts.map((post: { slug: string }) => ({ slug: post.slug }));
 }

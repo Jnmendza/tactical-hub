@@ -39,7 +39,7 @@ export default function FormationDesigner() {
   const fieldRef = useRef<HTMLDivElement>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [posts, setPosts] = useState<SimpleBlogCard[]>([]);
-
+  console.log("POSTS", posts);
   useEffect(() => {
     const fetchData = async () => {
       const categoriesData = await getCategories();
@@ -155,6 +155,7 @@ export default function FormationDesigner() {
               imageUrl={urlFor(post.coverImage).url()}
               title={post.title}
               smallDesc={post.smallDescription}
+              slug={post.currentSlug}
               className='mt-4'
             />
           </motion.div>
