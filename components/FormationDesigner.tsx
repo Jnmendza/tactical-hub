@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
 import {
   Select,
   SelectContent,
@@ -18,12 +19,39 @@ import { Player } from "@/lib/types";
 import html2canvas from "html2canvas";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getCategories } from "@/data/sanity";
+import { SimpleBlogCard } from "@/lib/types";
+import { fetchBlogPosts } from "@/lib/posts";
+import { BlogPostCard } from "./BlogPostCard";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionContent,
+  AccordionTrigger,
+} from "./ui/accordion";
+import { Skeleton } from "./ui/skeleton";
+import { urlFor } from "@/lib/sanity";
 
 export default function FormationDesigner() {
   const [players, setPlayers] = useState<Player[]>(formations["4-4-2"]);
   const [currentFormation, setCurrentFormation] = useState<string>("4-4-2");
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [posts, setPosts] = useState<SimpleBlogCard[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+      const postsData = (await fetchBlogPosts()).filter(
+        (post) => post.categoryTags[0] === currentFormation
+      );
+      setPosts(postsData);
+    };
+
+    fetchData();
+  }, [currentFormation]);
 
   // Selected player for editing
   const selectedPlayer = players.find((p) => p.id === selectedPlayerId) || null;
@@ -97,11 +125,45 @@ export default function FormationDesigner() {
     }
   };
 
+  if (!posts)
+    <div>
+      <Skeleton />
+    </div>;
+
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-      <Card className='lg:col-span-2 '>
-        <CardContent className='p-6'>
-          <div ref={fieldRef} className='relative w-full'>
+    <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
+      {/* Related posts */}
+      <div className='lg:col-span-1 border-2 border-white/80 rounded-lg p-4 max-h-[500px] overflow-auto no-scrollbar'>
+        <h2 className='text-2xl font-bold'>Related Posts</h2>
+        {posts.map((post, index) => (
+          <motion.div
+            key={index}
+            animate={index === 0 && posts.length > 1 ? { y: [0, -5, 0] } : {}}
+            transition={
+              index == 0 && posts.length > 1
+                ? {
+                    duration: 1.5,
+                    repeat: 5,
+                    repeatDelay: 6,
+                    ease: "easeInOut",
+                  }
+                : {}
+            }
+          >
+            <BlogPostCard
+              key={index}
+              imageUrl={urlFor(post.coverImage).url()}
+              title={post.title}
+              smallDesc={post.smallDescription}
+              className='mt-4'
+            />
+          </motion.div>
+        ))}
+      </div>
+
+      <Card className='lg:col-span-2'>
+        <CardContent className='p-6 h-full'>
+          <div ref={fieldRef} className='relative w-full h-full'>
             <FootballField
               players={players}
               onPlayerMove={handlePlayerPositionChange}
@@ -112,6 +174,34 @@ export default function FormationDesigner() {
       </Card>
 
       <div className='space-y-6'>
+        {/* Instructions  */}
+        <Accordion
+          className=' rounded-md bg-black px-6 py-4'
+          type='single'
+          // defaultValue='intructions'
+          collapsible
+        >
+          <AccordionItem value='intructions'>
+            <AccordionTrigger className='text-2xl font-bold'>
+              Instructions
+            </AccordionTrigger>
+            <AccordionContent>
+              <ul className='list-disc pl-5 space-y-2'>
+                <li>Select a formation from the dropdown menu</li>
+                <li>Drag players to adjust their positions</li>
+                <li>
+                  Click a player or use the dropdown to edit their name and
+                  number
+                </li>
+                <li>Click Export to download your formation as an image</li>
+                <li>
+                  Click Reset Formation to revert to the default positions
+                </li>
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
         <Card>
           <CardContent className='p-6'>
             <h2 className='text-2xl font-bold mb-4'>Formation Controls</h2>
@@ -128,11 +218,11 @@ export default function FormationDesigner() {
                     <SelectValue placeholder='Select formation' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='4-4-2'>4-4-2</SelectItem>
-                    <SelectItem value='4-3-3'>4-3-3</SelectItem>
-                    <SelectItem value='4-2-3-1'>4-2-3-1</SelectItem>
-                    <SelectItem value='3-5-2'>3-5-2</SelectItem>
-                    <SelectItem value='5-3-2'>5-3-2</SelectItem>
+                    {categories.map((item, index) => (
+                      <SelectItem key={index} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -243,21 +333,6 @@ export default function FormationDesigner() {
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='p-6'>
-            <h2 className='text-2xl font-bold mb-4'>Instructions</h2>
-            <ul className='list-disc pl-5 space-y-2'>
-              <li>Select a formation from the dropdown menu</li>
-              <li>Drag players to adjust their positions</li>
-              <li>
-                Click a player or use the dropdown to edit their name and number
-              </li>
-              <li>Click Export to download your formation as an image</li>
-              <li>Click Reset Formation to revert to the default positions</li>
-            </ul>
           </CardContent>
         </Card>
       </div>
