@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,12 +18,30 @@ import { Player } from "@/lib/types";
 import html2canvas from "html2canvas";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getCategories } from "@/data/sanity";
+import { SimpleBlogCard } from "@/lib/types";
+import { fetchBlogPosts } from "@/lib/posts";
 
 export default function FormationDesigner() {
   const [players, setPlayers] = useState<Player[]>(formations["4-4-2"]);
   const [currentFormation, setCurrentFormation] = useState<string>("4-4-2");
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [posts, setPosts] = useState<SimpleBlogCard[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+      const postsData = (await fetchBlogPosts()).filter(
+        (post) => post.categoryTags[0] === currentFormation
+      );
+      setPosts(postsData);
+    };
+
+    fetchData();
+  }, [currentFormation]);
 
   // Selected player for editing
   const selectedPlayer = players.find((p) => p.id === selectedPlayerId) || null;
@@ -128,11 +146,11 @@ export default function FormationDesigner() {
                     <SelectValue placeholder='Select formation' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='4-4-2'>4-4-2</SelectItem>
-                    <SelectItem value='4-3-3'>4-3-3</SelectItem>
-                    <SelectItem value='4-2-3-1'>4-2-3-1</SelectItem>
-                    <SelectItem value='3-5-2'>3-5-2</SelectItem>
-                    <SelectItem value='5-3-2'>5-3-2</SelectItem>
+                    {categories.map((item, index) => (
+                      <SelectItem key={index} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
